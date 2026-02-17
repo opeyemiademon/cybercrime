@@ -1,0 +1,49 @@
+{
+  "name": "evidence-management-backend",
+  "version": "1.0.0",
+  "description": "Digital Evidence Management System Backend",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node build/server.js",
+    "dev": "nodemon build/server.js",
+    "build": "tsc",
+    "start:ts": "ts-node --esm src/server.ts",
+    "dev:ts": "nodemon --exec ts-node --esm src/server.ts",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@apollo/server": "^5.1.0",
+    "@as-integrations/express5": "^1.1.2",
+    "@graphql-tools/merge": "^9.1.1",
+    "@graphql-tools/schema": "^10.0.25",
+    "@types/bcrypt": "^6.0.0",
+    "@types/body-parser": "^1.19.6",
+    "@types/cors": "^2.8.19",
+    "@types/graphql": "^14.2.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "graphql": "^16.12.0",
+    "graphql-tag": "^2.12.6",
+    "graphql-upload": "^17.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.0",
+    "nodemailer": "^7.0.6",
+    "nodemon": "^3.1.10",
+    "path": "^0.12.7",
+    "typescript": "^5.9.3",
+    "typescript-transform-paths": "^3.5.5",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/node": "^22.0.0"
+  }
+}
