@@ -144,7 +144,7 @@ export default function CaseDetailPage() {
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Case not found</h3>
-          <p className="text-gray-600 dark:text-gray-400">The case you&apos;re looking for doesn&apos;t exist.</p>
+          <p className="text-gray-600 dark:text-gray-400">The case you're looking for doesn't exist.</p>
           <button
             onClick={() => router.push('/cases')}
             className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"

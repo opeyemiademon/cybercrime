@@ -82,8 +82,9 @@ async function initServer() {
     next();
   });
 
-  app.use(bodyParser.json({ limit: '50mb' }));
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+  // Increase payload size limit for large video/file uploads
+  app.use(bodyParser.json({ limit: '500mb' }));
+  app.use(bodyParser.urlencoded({ limit: '500mb', extended: true, parameterLimit: 50000 }));
   
   // Ensure upload directories exist
   ensureDirectoriesExist();
@@ -116,6 +117,7 @@ async function initServer() {
   
   app.use(
     '/graphql',
+    bodyParser.json({ limit: '500mb' }),
     expressMiddleware(apolloServer, {
       context: async ({ req }: { req: ExpressRequest }) => {
         const authHeader = req.headers.authorization || '';
@@ -145,10 +147,15 @@ async function initServer() {
   
   const PORT = include.PORT;
 
-  app.listen(PORT, '0.0.0.0', () => {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server is running on http://localhost:${PORT}`);
     console.log(`✅ GraphQL endpoint: http://localhost:${PORT}/graphql`);
   });
+
+  // Increase timeout for large file uploads (10 minutes)
+  server.timeout = 600000;
+  server.keepAliveTimeout = 610000;
+  server.headersTimeout = 620000;
 }
 
 initServer().catch(error => {

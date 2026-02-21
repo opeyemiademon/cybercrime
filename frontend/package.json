@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "deploy": "scp -r ./backup/* root@31.97.213.139:/var/www/chaintrivex/frontend",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

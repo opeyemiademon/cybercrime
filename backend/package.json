@@ -8,6 +8,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node build/server.js",
+       "deploy": "scp -r ./build/* root@31.97.213.139:/var/www/chaintrivex/backend",
     "dev": "nodemon build/server.js",
     "build": "tsc",
     "start:ts": "ts-node --esm src/server.ts",
