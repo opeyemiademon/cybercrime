@@ -1,15 +1,52 @@
 'use client';
 
-import { useState } from 'react';
 import Header from '@/components/Header';
-import { FolderOpen, Shield, CheckCircle, AlertTriangle, TrendingUp, Clock, Activity, ArrowUpRight, Users, FileText, ChevronRight } from 'lucide-react';
-import { mockCases, mockEvidence, mockCustodyLogs, mockDashboardStats } from '@/lib/mockData';
+import { FolderOpen, Shield, CheckCircle, AlertTriangle, TrendingUp, Clock, Activity, ArrowUpRight, Users, FileText, ChevronRight, Loader2 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
+import { getDashboardStats, getAllCases, getAllCustodyLogs } from '@/lib/api_services';
 
 export default function DashboardPage() {
-  const recentCases = mockCases.slice(0, 5);
-  const recentActivity = mockCustodyLogs.slice(0, 6);
+  // Fetch dashboard statistics
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['dashboardStats'],
+    queryFn: getDashboardStats,
+  });
+
+  // Fetch all cases
+  const { data: casesResponse, isLoading: casesLoading } = useQuery({
+    queryKey: ['cases'],
+    queryFn: () => getAllCases(),
+  });
+
+  // Fetch all custody logs
+  const { data: logsResponse, isLoading: logsLoading } = useQuery({
+    queryKey: ['allCustodyLogs'],
+    queryFn: () => getAllCustodyLogs(),
+  });
+
+  const recentCases = casesResponse?.cases?.slice(0, 5) || [];
+  const recentActivity = logsResponse?.logs?.slice(0, 6) || [];
+
+  const isLoading = statsLoading || casesLoading || logsLoading;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+        <Header 
+          title="Dashboard" 
+          subtitle="Overview of your evidence management system"
+        />
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 text-blue-600 mx-auto animate-spin mb-4" />
+            <p className="text-gray-600 dark:text-gray-400">Loading dashboard...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
@@ -33,7 +70,7 @@ export default function DashboardPage() {
               </span>
             </div>
             <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Cases</h3>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{mockDashboardStats.totalCases}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{stats?.totalCases || 0}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">+3 from last month</p>
           </div>
 
@@ -49,7 +86,7 @@ export default function DashboardPage() {
               </span>
             </div>
             <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Active Cases</h3>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{mockDashboardStats.activeCases}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{stats?.activeCases || 0}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Currently investigating</p>
           </div>
 
@@ -64,7 +101,7 @@ export default function DashboardPage() {
               </span>
             </div>
             <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Evidence Items</h3>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{mockDashboardStats.totalEvidence}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{stats?.totalEvidence || 0}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Across all cases</p>
           </div>
 
@@ -79,7 +116,7 @@ export default function DashboardPage() {
               </span>
             </div>
             <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Verifications</h3>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{mockDashboardStats.verifications}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{stats?.verifications || 0}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">This month</p>
           </div>
         </div>
@@ -101,7 +138,12 @@ export default function DashboardPage() {
               </Link>
             </div>
             <div className="space-y-3">
-              {recentCases.map((caseItem, index) => (
+              {recentCases.length === 0 ? (
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <p>No cases found</p>
+                </div>
+              ) : (
+                recentCases.map((caseItem: any, index: number) => (
                 <Link
                   key={caseItem.id}
                   href={`/cases/${caseItem.id}`}
@@ -140,7 +182,8 @@ export default function DashboardPage() {
                     <ArrowUpRight className="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
                   </div>
                 </Link>
-              ))}
+              ))
+              )}
             </div>
           </div>
 
@@ -153,9 +196,12 @@ export default function DashboardPage() {
               <h2 className="text-lg font-bold text-gray-900 dark:text-white">Recent Activity</h2>
             </div>
             <div className="space-y-4">
-              {recentActivity.map((log, index) => {
-                const evidence = mockEvidence.find(e => e.id === log.evidenceId);
-                return (
+              {recentActivity.length === 0 ? (
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <p>No recent activity</p>
+                </div>
+              ) : (
+                recentActivity.map((log: any, index: number) => (
                   <div key={log.id} className="relative pl-6 pb-4 border-l-2 border-gray-200 dark:border-gray-700 last:border-0 last:pb-0" style={{ animationDelay: `${index * 50}ms` }}>
                     <div className={`absolute -left-2 top-0 w-4 h-4 rounded-full border-2 border-white dark:border-gray-800 ${
                       log.action === 'Collected' ? 'bg-blue-500' :
@@ -169,16 +215,16 @@ export default function DashboardPage() {
                         {log.action}
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-400 mb-1 line-clamp-1">
-                        {evidence?.filename || 'Evidence'}
+                        Evidence ID: {log.evidenceId}
                       </p>
                       <div className="flex items-center justify-between">
-                        <p className="text-xs text-gray-500 dark:text-gray-500">{log.performedBy}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500">{formatDate(log.timestamp).split(',')[0]}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500">{log.performedByName}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">{formatDate(log.createdAt).split(',')[0]}</p>
                       </div>
                     </div>
                   </div>
-                );
-              })}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -192,25 +238,33 @@ export default function DashboardPage() {
             <div className="flex-1">
               <h3 className="font-bold text-amber-900 dark:text-amber-200 mb-3 text-lg">System Alerts & Notifications</h3>
               <div className="space-y-3">
-                <div className="flex items-start space-x-3 p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg">
-                  <div className="w-2 h-2 bg-amber-500 rounded-full mt-1.5"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">3 evidence items pending verification</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Action required within 24 hours</p>
+                {stats && stats.totalEvidence - stats.verifications > 0 && (
+                  <div className="flex items-start space-x-3 p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg">
+                    <div className="w-2 h-2 bg-amber-500 rounded-full mt-1.5"></div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {stats.totalEvidence - stats.verifications} evidence items pending verification
+                      </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Action required for integrity checks</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start space-x-3 p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">2 cases require status update</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Review and update case progress</p>
+                )}
+                {stats && stats.activeCases > 0 && (
+                  <div className="flex items-start space-x-3 p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {stats.activeCases} active cases in progress
+                      </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Currently under investigation</p>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="flex items-start space-x-3 p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg">
                   <div className="w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">System backup completed successfully</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Last backup: 2 hours ago</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">System operational</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">All systems running normally</p>
                   </div>
                 </div>
               </div>

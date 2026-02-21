@@ -71,6 +71,54 @@ export interface VerificationResult {
   evidence?: EvidenceData;
 }
 
+export const getEvidence = async (id: string): Promise<EvidenceData> => {
+  const query = `
+    query GetEvidence($id: ID!) {
+      getEvidence(id: $id) {
+        success
+        message
+        evidence {
+          id
+          evidenceId
+          caseId
+          filename
+          fileType
+          fileSize
+          evidenceType
+          hash
+          hashAlgorithm
+          sourceDevice
+          capturedAt
+          collectedBy
+          collectedByName
+          location
+          status
+          verificationStatus
+          lastVerifiedAt
+          verificationCount
+          tags
+          notes
+          metadata
+          filePath
+          createdAt
+          updatedAt
+        }
+      }
+    }
+  `;
+
+  const response = await graphqlClient.post('', {
+    query,
+    variables: { id },
+  });
+
+  if (response.data.errors) {
+    throw new Error(response.data.errors[0].message);
+  }
+
+  return response.data.data.getEvidence.evidence;
+};
+
 export const getAllEvidence = async (params?: {
   caseId?: string;
   status?: string;

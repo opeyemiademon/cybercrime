@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { 
-  ArrowLeft, User, FileText, Calendar, Clock, Plus, Shield, CheckCircle, Upload, X, Loader2, AlertCircle
+  ArrowLeft, User, FileText, Calendar, Clock, Plus, Shield, CheckCircle, Upload, X, Loader2, AlertCircle, Camera, Video, Mic
 } from 'lucide-react';
+import MediaCaptureModal from '@/components/MediaCaptureModal';
 import { formatDate, formatBytes, generateHash } from '@/lib/utils';
 import type { EvidenceType } from '@/types';
 import Select from 'react-select';
@@ -97,7 +98,6 @@ export default function CaseDetailPage() {
         caseLogs,
         { reportType, ...reportOptions }
       );
-      notify('success', 'PDF Generated', 'Report has been downloaded successfully');
     } catch (error: any) {
       notify('error', 'Generation Failed', error.message || 'Failed to generate PDF report');
     } finally {
@@ -650,6 +650,8 @@ function UploadEvidenceModal({ onClose, caseId }: { onClose: () => void; caseId:
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [showCaptureModal, setShowCaptureModal] = useState(false);
+  const [captureType, setCaptureType] = useState<'photo' | 'video' | 'audio'>('photo');
 
   // Create evidence mutation
   const createEvidenceMutation = useMutation({
@@ -714,6 +716,16 @@ function UploadEvidenceModal({ onClose, caseId }: { onClose: () => void; caseId:
     const calculatedHash = await generateHash(selectedFile);
     setHash(calculatedHash);
     setIsUploading(false);
+  };
+
+  const handleCaptureClick = (type: 'photo' | 'video' | 'audio') => {
+    setCaptureType(type);
+    setShowCaptureModal(true);
+  };
+
+  const handleMediaCapture = async (capturedFile: File) => {
+    await processFile(capturedFile);
+    setShowCaptureModal(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -802,9 +814,40 @@ function UploadEvidenceModal({ onClose, caseId }: { onClose: () => void; caseId:
               </div>
             </div>
           )}
+          {/* Capture Options */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-3">Capture Evidence</label>
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                type="button"
+                onClick={() => handleCaptureClick('photo')}
+                className="flex flex-col items-center justify-center p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all group"
+              >
+                <Camera className="w-8 h-8 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 mb-2" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">Capture Photo</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCaptureClick('video')}
+                className="flex flex-col items-center justify-center p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-red-500 dark:hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group"
+              >
+                <Video className="w-8 h-8 text-gray-600 dark:text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400 mb-2" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-red-600 dark:group-hover:text-red-400">Record Video</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCaptureClick('audio')}
+                className="flex flex-col items-center justify-center p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-purple-500 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all group"
+              >
+                <Mic className="w-8 h-8 text-gray-600 dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 mb-2" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">Record Audio</span>
+              </button>
+            </div>
+          </div>
+
           {/* File Upload Area */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Evidence File *</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Or Upload File *</label>
             <div
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -975,6 +1018,14 @@ function UploadEvidenceModal({ onClose, caseId }: { onClose: () => void; caseId:
           </div>
         </form>
       </div>
+
+      {/* Media Capture Modal */}
+      <MediaCaptureModal
+        isOpen={showCaptureModal}
+        onClose={() => setShowCaptureModal(false)}
+        onCapture={handleMediaCapture}
+        captureType={captureType}
+      />
     </div>
   );
 }

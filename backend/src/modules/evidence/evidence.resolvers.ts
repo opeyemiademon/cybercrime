@@ -107,6 +107,7 @@ const evidenceResolvers = {
     createEvidence: async (_: any, { input }: any, context: any) => {
       const user = requireAuth(context);
       try {
+
         const evidenceId = input.evidenceId || await generateEvidenceId();
         
         const existingEvidence = await Evidence.findOne({ hash: input.hash, isDeleted: false });
@@ -126,7 +127,7 @@ const evidenceResolvers = {
               input.caseId,
               input.filename,
               evidenceId
-            );
+              );
           } catch (uploadError: any) {
             return {
               success: false,
@@ -134,6 +135,8 @@ const evidenceResolvers = {
               evidence: null
             };
           }
+        } else {
+          console.log('No fileData provided in input');
         }
 
         const evidence = new Evidence({
@@ -149,7 +152,6 @@ const evidenceResolvers = {
         });
 
         await evidence.save();
-
         const caseData = await Case.findById(input.caseId);
         if (caseData) {
           caseData.evidenceCount = (caseData.evidenceCount || 0) + 1;

