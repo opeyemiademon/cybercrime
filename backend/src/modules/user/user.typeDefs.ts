@@ -8,6 +8,9 @@ const userTypeDefs = gql`
     role: String!
     department: String
     phone: String
+    qualifications: String
+    experience: String
+    professionalBody: String
     isActive: Boolean!
     lastLogin: String
     createdAt: String!
@@ -52,6 +55,9 @@ const userTypeDefs = gql`
     role: String
     department: String
     phone: String
+    qualifications: String
+    experience: String
+    professionalBody: String
     isActive: Boolean
   }
 

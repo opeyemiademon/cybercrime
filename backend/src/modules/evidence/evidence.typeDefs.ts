@@ -23,6 +23,8 @@ const evidenceTypeDefs = gql`
     lastVerifiedAt: String
     verificationCount: Int!
     tags: [String!]
+    serialNumber: String
+    conditionOnReceipt: String
     notes: String
     metadata: JSON
     filePath: String
@@ -65,6 +67,8 @@ const evidenceTypeDefs = gql`
     capturedAt: String
     location: String
     tags: [String!]
+    serialNumber: String
+    conditionOnReceipt: String
     notes: String
     metadata: JSON
     filePath: String
@@ -78,6 +82,8 @@ const evidenceTypeDefs = gql`
     location: String
     status: String
     tags: [String!]
+    serialNumber: String
+    conditionOnReceipt: String
     notes: String
     metadata: JSON
   }

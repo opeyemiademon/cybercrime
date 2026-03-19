@@ -8,10 +8,10 @@ import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import type { CasePriority } from '@/types';
 import Select from 'react-select';
-import { 
-  getAllCases, 
-  createCase, 
-  updateCase, 
+import {
+  getAllCases,
+  createCase,
+  updateCase,
   deleteCase,
   CaseData,
   CreateCaseData,
@@ -19,6 +19,7 @@ import {
   createEvidence,
   CreateEvidenceData
 } from '@/lib/api_services';
+import RichTextEditor from '@/components/RichTextEditor';
 
 export default function CasesPage() {
   const queryClient = useQueryClient();
@@ -239,7 +240,10 @@ export default function CasesPage() {
                         )}
                         
                         {caseItem.description && (
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{caseItem.description}</p>
+                          <div
+                            className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2 rich-text-content"
+                            dangerouslySetInnerHTML={{ __html: caseItem.description }}
+                          />
                         )}
                         
                         <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400">
@@ -316,7 +320,10 @@ export default function CasesPage() {
                 )}
                 
                 {caseItem.description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{caseItem.description}</p>
+                  <div
+                    className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 rich-text-content"
+                    dangerouslySetInnerHTML={{ __html: caseItem.description }}
+                  />
                 )}
                 
                 <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
@@ -618,11 +625,9 @@ function CaseModal({ caseData, onClose }: { caseData: CaseData | null; onClose: 
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
-            <textarea
+            <RichTextEditor
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none"
-              rows={3}
+              onChange={(value) => setFormData({ ...formData, description: value })}
               placeholder="Enter case description"
             />
           </div>

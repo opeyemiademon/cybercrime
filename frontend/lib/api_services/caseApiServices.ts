@@ -15,6 +15,13 @@ export interface CaseData {
   evidenceCount: number;
   tags?: string[];
   notes?: string;
+  courtTribunal?: string;
+  requestingAuthority?: string;
+  investigationReference?: string;
+  requestingAgency?: string;
+  dateOfInstruction?: string;
+  scopeOfEngagement?: string;
+  specificQuestions?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -30,6 +37,13 @@ export interface CreateCaseData {
   incidentDate?: string;
   tags?: string[];
   notes?: string;
+  courtTribunal?: string;
+  requestingAuthority?: string;
+  investigationReference?: string;
+  requestingAgency?: string;
+  dateOfInstruction?: string;
+  scopeOfEngagement?: string;
+  specificQuestions?: string[];
 }
 
 export interface UpdateCaseData {
@@ -42,6 +56,13 @@ export interface UpdateCaseData {
   incidentDate?: string;
   tags?: string[];
   notes?: string;
+  courtTribunal?: string;
+  requestingAuthority?: string;
+  investigationReference?: string;
+  requestingAgency?: string;
+  dateOfInstruction?: string;
+  scopeOfEngagement?: string;
+  specificQuestions?: string[];
 }
 
 export interface DashboardStats {
@@ -76,6 +97,13 @@ export const getAllCases = async (params?: {
           evidenceCount
           tags
           notes
+          courtTribunal
+          requestingAuthority
+          investigationReference
+          requestingAgency
+          dateOfInstruction
+          scopeOfEngagement
+          specificQuestions
           createdAt
           updatedAt
         }
@@ -117,6 +145,13 @@ export const getCase = async (id: string): Promise<CaseData> => {
           evidenceCount
           tags
           notes
+          courtTribunal
+          requestingAuthority
+          investigationReference
+          requestingAgency
+          dateOfInstruction
+          scopeOfEngagement
+          specificQuestions
           createdAt
           updatedAt
         }

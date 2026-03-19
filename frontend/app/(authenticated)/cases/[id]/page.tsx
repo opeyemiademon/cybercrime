@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { 
-  ArrowLeft, User, FileText, Calendar, Clock, Plus, Shield, CheckCircle, Upload, X, Loader2, AlertCircle, Camera, Video, Mic
+import {
+  ArrowLeft, User, FileText, Calendar, Clock, Plus, Shield, CheckCircle, Upload, X, Loader2, AlertCircle, Camera, Video, Mic, ClipboardList
 } from 'lucide-react';
 import MediaCaptureModal from '@/components/MediaCaptureModal';
 import { formatDate, formatBytes, generateHash } from '@/lib/utils';
@@ -31,7 +31,7 @@ export default function CaseDetailPage() {
   const queryClient = useQueryClient();
   const caseId = params.id as string;
   
-  const [activeTab, setActiveTab] = useState<'evidence' | 'custody' | 'reports'>('evidence');
+  const [activeTab, setActiveTab] = useState<'evidence' | 'custody' | 'reports' | 'expert'>('evidence');
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showCustodyModal, setShowCustodyModal] = useState(false);
   const [selectedEvidenceId, setSelectedEvidenceId] = useState<string>('');
@@ -282,7 +282,10 @@ export default function CaseDetailPage() {
         {caseData.description && (
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-6 transition-colors">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Description</h3>
-            <p className="text-gray-700 dark:text-gray-300 text-sm">{caseData.description}</p>
+            <div
+              className="text-gray-700 dark:text-gray-300 text-sm rich-text-content"
+              dangerouslySetInnerHTML={{ __html: caseData.description }}
+            />
           </div>
         )}
 
@@ -296,36 +299,24 @@ export default function CaseDetailPage() {
 
         {/* Tabs */}
         <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-4 md:mb-6 overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('evidence')}
-            className={`flex-1 px-3 md:px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap text-sm md:text-base ${
-              activeTab === 'evidence'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            Evidence
-          </button>
-          <button
-            onClick={() => setActiveTab('custody')}
-            className={`flex-1 px-3 md:px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap text-sm md:text-base ${
-              activeTab === 'custody'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            Custody
-          </button>
-          <button
-            onClick={() => setActiveTab('reports')}
-            className={`flex-1 px-3 md:px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap text-sm md:text-base ${
-              activeTab === 'reports'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            Reports
-          </button>
+          {[
+            { key: 'evidence', label: 'Evidence' },
+            { key: 'custody', label: 'Custody' },
+            { key: 'reports', label: 'Reports' },
+            { key: 'expert', label: 'Expert Report' },
+          ].map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className={`flex-1 px-3 md:px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap text-sm md:text-base ${
+                activeTab === tab.key
+                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         {/* Evidence Grid */}
@@ -590,11 +581,64 @@ export default function CaseDetailPage() {
             </div>
           </div>
         )}
-      </div>
+
+        {/* Expert Report Tab */}
+        {activeTab === 'expert' && (
+          <div className="max-w-3xl">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8">
+              <div className="flex items-center space-x-3 mb-4">
+                <ClipboardList className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Digital Forensic Expert Opinion Report</h2>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
+                Generate a court-compliant Digital Forensic Expert Opinion Report covering all 13 required sections:
+                Cover Page, Expert Credentials, Instructions, Materials, Chain of Custody, Methodology, Examination Process,
+                Findings, Limitations, Expert Opinion, Conclusion, Recommendations, and Annexures.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {[
+                  { label: 'Evidence Items', value: caseEvidence.length },
+                  { label: 'Custody Logs', value: caseLogs.length },
+                  { label: 'Case Status', value: caseData.status },
+                ].map(stat => (
+                  <div key={stat.label} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  '1. Cover Page', '2. Expert Credentials & Declaration', '3. Instructions Received',
+                  '4. Materials Received for Examination', '5. Chain of Custody Summary',
+                  '6. Methodology', '7. Examination Process', '8. Findings',
+                  '9. Limitations', '10. Expert Opinion', '11. Conclusion',
+                  '12. Recommendations', '13. Annexures (Hash Values, Custody Forms)',
+                ].map(section => (
+                  <div key={section} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                    <span>{section}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => router.push(`/cases/${caseId}/expert-report`)}
+                className="mt-8 w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+              >
+                <ClipboardList className="w-5 h-5" />
+                Open Expert Report Builder
+              </button>
+            </div>
+          </div>
+        )}
+      </div>  {/* end px-4 md:px-6 */}
 
       {showUploadModal && (
-        <UploadEvidenceModal 
-          onClose={() => setShowUploadModal(false)} 
+        <UploadEvidenceModal
+          onClose={() => setShowUploadModal(false)}
           caseId={caseId}
         />
       )}

@@ -80,6 +80,14 @@ const evidenceSchema = new Schema({
   tags: [{
     type: String
   }],
+  serialNumber: {
+    type: String,
+    default: ''
+  },
+  conditionOnReceipt: {
+    type: String,
+    default: ''
+  },
   notes: {
     type: String,
     default: ''

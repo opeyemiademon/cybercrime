@@ -16,6 +16,13 @@ const caseTypeDefs = gql`
     evidenceCount: Int!
     tags: [String!]
     notes: String
+    courtTribunal: String
+    requestingAuthority: String
+    investigationReference: String
+    requestingAgency: String
+    dateOfInstruction: String
+    scopeOfEngagement: String
+    specificQuestions: [String!]
     createdAt: String!
     updatedAt: String!
   }
@@ -52,6 +59,13 @@ const caseTypeDefs = gql`
     incidentDate: String
     tags: [String!]
     notes: String
+    courtTribunal: String
+    requestingAuthority: String
+    investigationReference: String
+    requestingAgency: String
+    dateOfInstruction: String
+    scopeOfEngagement: String
+    specificQuestions: [String!]
   }
 
   input UpdateCaseInput {
@@ -64,6 +78,13 @@ const caseTypeDefs = gql`
     incidentDate: String
     tags: [String!]
     notes: String
+    courtTribunal: String
+    requestingAuthority: String
+    investigationReference: String
+    requestingAgency: String
+    dateOfInstruction: String
+    scopeOfEngagement: String
+    specificQuestions: [String!]
   }
 
   extend type Query {

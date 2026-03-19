@@ -20,6 +20,8 @@ export interface EvidenceData {
   lastVerifiedAt?: string;
   verificationCount: number;
   tags?: string[];
+  serialNumber?: string;
+  conditionOnReceipt?: string;
   notes?: string;
   metadata?: any;
   filePath?: string;
@@ -40,6 +42,8 @@ export interface CreateEvidenceData {
   capturedAt?: string;
   location?: string;
   tags?: string[];
+  serialNumber?: string;
+  conditionOnReceipt?: string;
   notes?: string;
   metadata?: any;
   filePath?: string;
@@ -53,6 +57,8 @@ export interface UpdateEvidenceData {
   location?: string;
   status?: string;
   tags?: string[];
+  serialNumber?: string;
+  conditionOnReceipt?: string;
   notes?: string;
   metadata?: any;
 }
@@ -97,6 +103,8 @@ export const getEvidence = async (id: string): Promise<EvidenceData> => {
           lastVerifiedAt
           verificationCount
           tags
+          serialNumber
+          conditionOnReceipt
           notes
           metadata
           filePath
@@ -149,6 +157,8 @@ export const getAllEvidence = async (params?: {
           lastVerifiedAt
           verificationCount
           tags
+          serialNumber
+          conditionOnReceipt
           notes
           metadata
           filePath

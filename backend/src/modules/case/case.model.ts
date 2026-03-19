@@ -59,6 +59,32 @@ const caseSchema = new Schema({
     type: String,
     default: ''
   },
+  courtTribunal: {
+    type: String,
+    default: ''
+  },
+  requestingAuthority: {
+    type: String,
+    default: ''
+  },
+  investigationReference: {
+    type: String,
+    default: ''
+  },
+  requestingAgency: {
+    type: String,
+    default: ''
+  },
+  dateOfInstruction: {
+    type: Date
+  },
+  scopeOfEngagement: {
+    type: String,
+    default: ''
+  },
+  specificQuestions: [{
+    type: String
+  }],
   isDeleted: {
     type: Boolean,
     default: false

@@ -76,6 +76,8 @@ export default function EvidenceDetailPage() {
     link.click();
     };
 
+    const BACKEND_API_SERVER = process.env.NEXT_PUBLIC_API_SERVER||''
+
   const handleDownloadEvidence = async () => {
     if (!evidence) return;
     
@@ -83,7 +85,7 @@ export default function EvidenceDetailPage() {
     if (evidence.filePath) {
       try {
         // Fetch the file as blob to force download
-        const response = await fetch('http://localhost:8000' + evidence.filePath);
+        const response = await fetch(BACKEND_API_SERVER+ evidence.filePath);
         if (!response.ok) {
           throw new Error('Failed to download file');
         }
@@ -136,48 +138,49 @@ export default function EvidenceDetailPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <button 
-              onClick={() => router.back()}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
-            <div>
-              <div className="flex items-center space-x-3 mb-1">
-                <span className="text-sm text-gray-600 dark:text-gray-400">{evidence.evidenceId}</span>
-                {evidence.verificationStatus === 'Verified' && (
-                  <span className="flex items-center space-x-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded text-xs font-medium">
-                    <CheckCircle className="w-3 h-3" />
-                    <span>Verified</span>
-                  </span>
-                )}
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{evidence.filename}</h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Case: {caseData?.caseId} - {caseData?.title}
-              </p>
+        <div className="flex items-center gap-4 min-w-0">
+          <button
+            onClick={() => router.back()}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex-shrink-0"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          </button>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm text-gray-600 dark:text-gray-400 truncate">{evidence.evidenceId}</span>
+              {evidence.verificationStatus === 'Verified' && (
+                <span className="flex items-center space-x-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded text-xs font-medium flex-shrink-0">
+                  <CheckCircle className="w-3 h-3" />
+                  <span>Verified</span>
+                </span>
+              )}
             </div>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white truncate" title={evidence.filename}>
+              {evidence.filename}
+            </h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5 truncate">
+              Case: {caseData?.caseId} - {caseData?.title}
+            </p>
           </div>
-          
-          <div className="flex items-center space-x-3">
-            <button 
+
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
               onClick={handleDownloadEvidence}
-              className="flex items-center space-x-2 px-4 py-2 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors"
+              className="flex items-center space-x-2 px-3 py-2 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors text-sm"
             >
               <Download className="w-4 h-4" />
               <span>Download</span>
             </button>
-            <button 
+            <button
               onClick={() => setShowCustodyModal(true)}
-              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg font-medium transition-colors"
+              className="px-3 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg font-medium transition-colors text-sm"
             >
               Add Event
             </button>
-            <button 
+            <button
               onClick={handleVerifyIntegrity}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+              className="flex items-center space-x-2 px-3 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg font-medium transition-colors text-sm"
             >
               <Shield className="w-4 h-4" />
               <span>Verify Integrity</span>
@@ -688,8 +691,8 @@ function AddCustodyEventModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4 animate-fadeIn">
-      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center space-x-3">
             <div className="text-2xl">🔄</div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Add Custody Event</h2>
@@ -698,8 +701,8 @@ function AddCustodyEventModal({
             <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
-        
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto">
           {error && (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
               <p className="text-sm text-red-800 dark:text-red-200">{error}</p>

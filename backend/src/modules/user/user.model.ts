@@ -31,6 +31,18 @@ const userSchema = new Schema({
     type: String,
     default: ''
   },
+  qualifications: {
+    type: String,
+    default: ''
+  },
+  experience: {
+    type: String,
+    default: ''
+  },
+  professionalBody: {
+    type: String,
+    default: ''
+  },
   isActive: {
     type: Boolean,
     default: true

@@ -7,18 +7,22 @@ import evidenceTypeDefs from './modules/evidence/evidence.typeDefs.js';
 import evidenceResolvers from './modules/evidence/evidence.resolvers.js';
 import custodyLogTypeDefs from './modules/custodylog/custodylog.typeDefs.js';
 import custodyLogResolvers from './modules/custodylog/custodylog.resolvers.js';
+import forensicReportTypeDefs from './modules/forensicreport/forensicreport.typeDefs.js';
+import forensicReportResolvers from './modules/forensicreport/forensicreport.resolvers.js';
 
 export const schema = makeExecutableSchema({
   typeDefs: [
     userTypeDefs,
     caseTypeDefs,
     evidenceTypeDefs,
-    custodyLogTypeDefs
+    custodyLogTypeDefs,
+    forensicReportTypeDefs
   ],
   resolvers: [
     userResolvers,
     caseResolvers,
     evidenceResolvers,
-    custodyLogResolvers
+    custodyLogResolvers,
+    forensicReportResolvers
   ]
 });
