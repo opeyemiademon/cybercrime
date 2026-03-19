@@ -128,7 +128,7 @@ export default function EvidenceDetailPage() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 flex items-center justify-center transition-colors">
         <div className="text-center">
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Evidence not found</h3>
-          <p className="text-gray-600 dark:text-gray-400">The evidence you're looking for doesn't exist.</p>
+          <p className="text-gray-600 dark:text-gray-400">The evidence you are looking for doesnt exist.</p>
         </div>
       </div>
     );

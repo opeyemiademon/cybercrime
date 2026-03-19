@@ -35,16 +35,14 @@ export interface CreateCustodyLogData {
 }
 
 export const getAllCustodyLogs = async (params?: {
-  limit?: number;
-  offset?: number;
   evidenceId?: string;
   caseId?: string;
   action?: string;
   search?: string;
 }): Promise<{ logs: CustodyLogData[]; total: number }> => {
   const query = `
-    query GetAllCustodyLogs($limit: Int, $offset: Int, $evidenceId: ID, $caseId: ID, $action: String, $search: String) {
-      getAllCustodyLogs(limit: $limit, offset: $offset, evidenceId: $evidenceId, caseId: $caseId, action: $action, search: $search) {
+    query GetAllCustodyLogs($evidenceId: ID, $caseId: ID, $action: String, $search: String) {
+      getAllCustodyLogs(evidenceId: $evidenceId, caseId: $caseId, action: $action, search: $search) {
         success
         message
         logs {

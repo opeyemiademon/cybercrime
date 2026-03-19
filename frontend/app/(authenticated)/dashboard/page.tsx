@@ -163,7 +163,12 @@ export default function DashboardPage() {
                         </span>
                       </div>
                       <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{caseItem.title}</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1 mb-2">{caseItem.description}</p>
+                      {caseItem.description && (
+                        <div
+                          className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1 mb-2 rich-text-content"
+                          dangerouslySetInnerHTML={{ __html: caseItem.description }}
+                        />
+                      )}
                       <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
                         <span className="flex items-center space-x-1">
                           <Users className="w-3 h-3" />

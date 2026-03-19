@@ -446,13 +446,13 @@ export const generateForensicExpertReport = (
 
   // ── SECTION 10: EXPERT OPINION ─────────────────────────────────────────────
   y = sectionHeading(doc, y, '10', 'Expert Opinion');
-  y = bodyText(doc, y, stripHtml(forensicReport.expertOpinion) || 'N/A');
+  y = bodyText(doc, y, stripHtml(forensicReport.expertOpinion || '') || 'N/A');
 
   y = divider(doc, y);
 
   // ── SECTION 11: CONCLUSION ─────────────────────────────────────────────────
   y = sectionHeading(doc, y, '11', 'Conclusion');
-  y = bodyText(doc, y, stripHtml(forensicReport.conclusion) || 'N/A');
+  y = bodyText(doc, y, stripHtml(forensicReport.conclusion || '') || 'N/A');
 
   y = divider(doc, y);
 

@@ -17,7 +17,7 @@ const evidenceResolvers = {
                 if (!evidence || evidence.isDeleted) {
                     return {
                         success: false,
-                        message: 'Evidence not found',
+                        message: 'Evidence item not found',
                         evidence: null
                     };
                 }
