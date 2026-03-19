@@ -54,7 +54,7 @@ jobs:
             rm -rf .next
             npm run build
             sudo systemctl restart nginx
-            pm2 restart chaintrivex-frontend
+            pm2 restart frontend-chaintrivex
             
 
   deploy-backend:
