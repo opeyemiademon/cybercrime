@@ -1,13 +1,21 @@
 'use client';
 
+import Cookies from 'js-cookie';
 import { Bell, Search } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface HeaderProps {
   title: string;
   subtitle?: string;
 }
 
+
+
 export default function Header({ title, subtitle }: HeaderProps) {
+
+ 
+
+
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors">
       <div className="flex items-center justify-between">

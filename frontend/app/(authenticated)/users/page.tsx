@@ -104,78 +104,94 @@ export default function UsersPage() {
         )}
 
         {!isLoading && !error && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {users.map((user) => (
-            <div key={user.id} className="card hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
-                    <span className="text-primary-700 dark:text-primary-300 font-bold text-lg">
-                      {user.fullname.split(' ').map(n => n[0]).join('')}
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">{user.fullname}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
-                  </div>
-                </div>
-              </div>
-
-                <div className="space-y-3">
-                  <div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Role</span>
-                    <div className="mt-1">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
-                        {user.role}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Department</span>
-                    <p className="text-sm text-gray-900 dark:text-white mt-1">{user.department || 'N/A'}</p>
-                  </div>
-
-                  <div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Status</span>
-                    <div className="mt-1">
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${
-                        user.isActive 
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
-                          : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                      }`}>
-                        {user.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-2 pt-3 border-t border-gray-200 dark:border-gray-700">
-                    <button 
-                      onClick={() => handleEdit(user)}
-                      className="flex-1 btn-secondary text-sm py-2 flex items-center justify-center space-x-1"
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 text-sm">User</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 text-sm">Role</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 text-sm hidden md:table-cell">Department</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 text-sm hidden lg:table-cell">Phone</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 text-sm">Status</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 text-sm hidden lg:table-cell">Joined</th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 text-sm">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-16 text-center">
+                      <UserCheck className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+                      <p className="text-gray-500 dark:text-gray-400">No users found. Try adjusting your search or filters.</p>
+                    </td>
+                  </tr>
+                ) : (
+                  users.map((user, index) => (
+                    <tr
+                      key={user.id}
+                      className={`border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
+                        index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50/50 dark:bg-gray-800/50'
+                      }`}
                     >
-                      <Edit className="w-4 h-4" />
-                      <span>Edit</span>
-                    </button>
-                    <button 
-                      onClick={() => setDeletingUser(user)}
-                      className="flex-1 btn-danger text-sm py-2 flex items-center justify-center space-x-1"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span>Delete</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {!isLoading && !error && users.length === 0 && (
-          <div className="card text-center py-12">
-            <UserCheck className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No users found</h3>
-            <p className="text-gray-600 dark:text-gray-400">Try adjusting your search or filters</p>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-9 h-9 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-primary-700 dark:text-primary-300 font-bold text-sm">
+                              {user.fullname.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                            </span>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{user.fullname}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
+                          {user.role}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 hidden md:table-cell">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">{user.department || '—'}</span>
+                      </td>
+                      <td className="py-3 px-4 hidden lg:table-cell">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">{user.phone || '—'}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                          user.isActive
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                        }`}>
+                          {user.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 hidden lg:table-cell">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(user.createdAt).split(',')[0]}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center justify-end space-x-2">
+                          <button
+                            onClick={() => handleEdit(user)}
+                            className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+                            title="Edit user"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => setDeletingUser(user)}
+                            className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                            title="Delete user"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         )}
 
