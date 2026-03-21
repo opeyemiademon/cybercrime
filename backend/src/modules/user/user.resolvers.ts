@@ -85,7 +85,7 @@ const userResolvers = {
 
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (!isValidPassword) {
-        throw new Error('Invalid email or password');
+        throw new Error('Invalid email address or password');
       }
 
       if (!user.isActive) {
