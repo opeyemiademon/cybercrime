@@ -13,11 +13,14 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSidebar } from '@/contexts/SidebarContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Moon, Sun } from 'lucide-react';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { getMe } from '@/lib/api_services';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -28,9 +31,22 @@ const navigation = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isCollapsed, setIsCollapsed } = useSidebar();
   const { isDarkMode, toggleDarkMode } = useTheme();
+
+  const { data: profile, isError } = useQuery({
+    queryKey: ['me'],
+    queryFn: getMe,
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (isError) {
+      router.push('/');
+    }
+  }, [isError, router]);
 
   return (
     <>
@@ -112,8 +128,8 @@ export default function Sidebar() {
             {!isCollapsed ? (
               <>
                 <div className="px-4 py-3 bg-primary-700 rounded-lg mb-3">
-                  <p className="text-sm font-medium">Sarah Investigator</p>
-                  <p className="text-xs text-primary-200">Investigator</p>
+                  <p className="text-sm font-medium">{profile?.fullname || '—'}</p>
+                  <p className="text-xs text-primary-200">{profile?.role || '—'}</p>
                 </div>
                 <button 
                   onClick={toggleDarkMode}

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BACKEND_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/graphql';
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const graphqlClient = axios.create({
   baseURL: BACKEND_API_URL,
