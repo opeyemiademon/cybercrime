@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_API_URL
-
+console.log(BACKEND_API_URL)
 const graphqlClient = axios.create({
   baseURL: BACKEND_API_URL,
   headers: {
