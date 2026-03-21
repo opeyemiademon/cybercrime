@@ -76,7 +76,7 @@ export default function EvidenceDetailPage() {
     link.click();
     };
 
-    const BACKEND_API_SERVER = process.env.NEXT_PUBLIC_API_SERVER||''
+    const BACKEND_API_SERVER = process.env.NEXT_PUBLIC_API_SERVER||' https://api.chaintrivex.com'
 
   const handleDownloadEvidence = async () => {
     if (!evidence) return;
